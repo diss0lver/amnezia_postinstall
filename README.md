@@ -36,7 +36,7 @@ git clone https://github.com/diss0lver/amnezia_postinstall.git /opt/amnezia_post
 ```
 
 ## Usage
-Edit config.py with your favourite editor. Make script executable. Run.  
+Edit config.py with your favorite editor. Make script executable. Run.  
 
 ```bash
 cd /opt/amnezia_postinstall
