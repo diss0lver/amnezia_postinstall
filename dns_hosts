@@ -1,0 +1,2 @@
+# records from this file will placed to a-records.conf file of amnezia-dns container
+#host.example.com,8.8.8.8
