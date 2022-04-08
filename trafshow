@@ -1,0 +1,46 @@
+#
+# default fcolor:bcolor
+#	- Set the default screen background color-pair
+#
+# port[/proto] fcolor:bcolor
+#	- Set color pattern by service port
+#
+# [proto] source[/mask][,port] destination[/mask][,port] fcolor:bcolor
+#	- Set color pattern by pair of from-to addresses
+#
+# Reserved tokens `*', `any', `all' matchs ANY in the pattern.
+#
+# The colors are:
+#	black  red  green  yellow  blue  magenta  cyan  white
+#
+# The upper-case Fcolor mean bright *on* and Bcolor blink *on*.
+#
+
+#default white:blue
+
+# following color settings looks nice under black-on-gray xterm (xterm-color)
+
+# Private IP Addresses will be alarmed by Red foreground.
+# Source	Destination	Color
+
+10.0.0.0/8	any		Red
+any		10.0.0.0/8	Red
+127.0.0.1/8	any		Red
+any		127.0.0.1/8	Red
+172.16.0.0/16	any		Red
+any		172.16.0.0/16	Red
+192.168.0.0/16	any		Red
+any		192.168.0.0/16	Red
+
+# Network Services.
+# Service	Color	Comments
+
+
+https       Yellow  # cloak
+6789/tcp	Green   # shadowsocks
+1194/tcp	White   # openvpn
+1194/udp	White   # openvpn
+51820/udp	Magenta # wireguard
+4500/udp	Cyan    # ipsec
+500/udp		cyan    # ipsec
+
