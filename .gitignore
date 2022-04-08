@@ -1,3 +1,2 @@
 *.log
-/dns_hosts
 /test.py
