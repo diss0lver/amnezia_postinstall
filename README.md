@@ -32,7 +32,7 @@ Script for configuring your vps after amnezia-vpn containers installed.
 ```bash
 apt update
 apt install git
-git clone ...
+git clone https://github.com/diss0lver/amnezia_postinstall.git /opt/amnezia_postinstall
 ```
 
 ## Usage
@@ -42,7 +42,9 @@ Edit config.py with your favourite editor. Make script executable. Run.
 cd /opt/amnezia_postinstall
 nano config.py
 chmod +x amnezia_postinstall.py
+chmod +x monitor.py
 ./amnezia_postinstall.py
+./monitor.py
 ```
 
 ## License
