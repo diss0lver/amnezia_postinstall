@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os
 import config
 from misc import syscommand, check_ip
 from dockerset import container_id, replace_file_in_container, docker_bin
@@ -101,6 +102,7 @@ def dns_configure() -> None:
             replace_file_in_container(cont_id=dns_container_id,
                                       file_to_replace=config.DNS_CONT_A_FILE,
                                       new_file=config.TMP_DIR + "/a-records.conf")
+            os.remove(config.TMP_DIR + "/a-records.conf")
         else:
             log.error('No dns container found! Install it or disable DNS_USER_RECORDS option in config file!')
     else:
