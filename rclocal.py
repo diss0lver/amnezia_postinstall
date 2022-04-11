@@ -1,10 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import config
-from dsrLogger import logger as log
-from misc import syscommand, replace_string_in_file
 import os
+import config
+from parse import parse_timeout
+from dsrLogger import logger as log
+from misc import \
+    syscommand, \
+    replace_string_in_file, \
+    insert_to_index_of_file, \
+    index_of_line_contains, \
+    check_string_in_file
+
 
 config = config.Config()
 
@@ -16,7 +23,7 @@ def create_rclocal_file() -> None:
     log.info("Processing rc.local file...")
     with open(config.RC_LOCAL_FILE, 'w') as rc:
         rc.write(
-            "#!/bin/bash\n\n"
+            "#!/bin/bash\n"
             "sleep " + str(config.RC_LOCAL_RUN_TIMEOUT) + "\n"
             "/usr/bin/python3 " + config.MAIN_DIR + "/check_amnezia_rules.py > /dev/null 2>&1\n"
             "exit 0\n"
@@ -74,7 +81,7 @@ def rclocal_timeout() -> str or bool:
         for line in rc:
             if "sleep" in line:
                 found = True
-                timeout = line.split(" ")[1].strip().rstrip()
+                timeout = parse_timeout(string=line)
     if found is True:
         return timeout
     else:
@@ -91,21 +98,22 @@ def configure_rclocal() -> None:
         create_rclocal_file()
     else:
         timeout = rclocal_timeout()
-        # если строка с таймаутом не найдена
-        if timeout is False:
-            create_rclocal_file()
-        else:
-            # если таймаут был изменен в конфиге
+        if timeout is not False:
             if timeout != str(config.RC_LOCAL_RUN_TIMEOUT):
                 old_val = "sleep " + str(timeout)
                 new_val = "sleep " + str(config.RC_LOCAL_RUN_TIMEOUT)
                 replace_string_in_file(file=config.RC_LOCAL_FILE, old_val=old_val, new_val=new_val)
                 log.info("Setting new rc.local timeout value to '" + str(config.RC_LOCAL_RUN_TIMEOUT) + "' seconds..")
-    # если systemd unit rc.local не существует, создаем
+        else:
+            line_to_add = "sleep " + str(config.RC_LOCAL_RUN_TIMEOUT)
+            insert_to_index_of_file(file_to_insert=config.RC_LOCAL_FILE, string_to_insert=line_to_add, ind=1)
+        sleep_ind = index_of_line_contains(file_for_search=config.RC_LOCAL_FILE, string_to_search='sleep')
+        line_to_find = "/usr/bin/python3 " + config.MAIN_DIR + "/check_amnezia_rules.py > /dev/null 2>&1"
+        check_string_in_file(s_file=config.RC_LOCAL_FILE, string_to_check=line_to_find, ind=sleep_ind)
     if check_rclocal_unit() is False:
         create_rclocal_unit()
     log.info("rc-local looks good!")
 
+
 if __name__ == '__main__':
     configure_rclocal()
-

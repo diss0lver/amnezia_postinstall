@@ -65,7 +65,7 @@ def parse_ip_from_route(string: str):
     return data[0].strip()
 
 
-def parse_rule(string):
+def parse_rule(string: str):
     pat = (r''
            '(DOCKER-USER|INPUT)\s'
            '(.+)'
@@ -78,3 +78,12 @@ def parse_rule(string):
         return False
     return data[0]
 
+def parse_timeout(string: str):
+    pat = (r''
+           'sleep\s'
+           '(\d+)'
+    )
+    data = find(pat, string)
+    if data is False:
+        return False
+    return data[0]

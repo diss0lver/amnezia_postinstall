@@ -275,3 +275,56 @@ def select(items: list or tuple, joined=True, itemname="item") -> str:
             selected = items[int(choise) - 1]
             return selected
 
+def index_of_line_contains(file_for_search: str, string_to_search: str) -> int or bool:
+    """
+    :param file_for_search:
+    :param string_to_search:
+    :return:                    number of file line, which contains specified string
+    """
+    with open(file_for_search, 'r') as rc:
+        contents = rc.readlines()
+        i = 0
+        for line in contents:
+            i += 1
+            if string_to_search in line:
+                return i
+    return False
+
+
+def check_string_in_file(s_file: str, string_to_check: str, ind: int) -> None:
+    """
+    Searching string in file. Insert it, if not found
+    :param s_file:                file for searching
+    :param string_to_check:     searching string
+    :param ind:                 number of line of file to insert
+    :return:
+    """
+    found = False
+    with open(s_file, 'r') as rc:
+        for line in rc:
+            if string_to_check in line:
+                found = True
+    if found is False:
+        with open(s_file, 'r') as rc:
+            contents = rc.readlines()
+            contents.insert(ind, string_to_check + "\n")
+        with open(s_file, 'w') as rc:
+            contents = "".join(contents)
+            rc.write(contents)
+
+
+def insert_to_index_of_file(file_to_insert: str, string_to_insert: str, ind: int) -> None:
+    """
+    Inserting string to top of file
+    :param ind:                 line of file for inserting
+    :param file_to_insert:      file for inserting
+    :param string_to_insert:    string to insert
+    :return:
+    """
+    with open(file_to_insert, 'r') as rc:
+        contents = rc.readlines()
+        contents.insert(ind, string_to_insert + "\n")
+    with open(file_to_insert, 'w') as rc:
+        contents = "".join(contents)
+        rc.write(contents)
+
