@@ -87,3 +87,12 @@ def parse_timeout(string: str):
     if data is False:
         return False
     return data[0]
+
+def parse_issue(string:str):
+    pat = (r''
+           '(Alpine|Debian|Ubuntu)'
+           )
+    data = find(pat, string)
+    if data is False:
+        return False
+    return data[0]

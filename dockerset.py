@@ -11,7 +11,8 @@ from misc import \
 from parse import \
     parse_ip, \
     parse_cidr, \
-    parse_ip_from_route
+    parse_ip_from_route, \
+    parse_issue
 
 docker_bin = find_bin(bin_file='docker')
 config = config.Config()
@@ -268,15 +269,46 @@ def cont_without_ip(cont_list: list) -> list:
     return c_list
 
 
-def install_iproute2_in_container(container: str) -> None:
+def container_issue(cont_name: str) -> str or bool:
+    """
+    :param cont_name:   container name for request
+    :return:            issue of container OS (Debian, Alpine, etc)
+    """
+    command = "docker exec " + cont_name + " cat /etc/issue"
+    res = syscommand(command=command)
+    issue = False
+    if res:
+        for line in res:
+            issue = parse_issue(string=line)
+            if issue is not False:
+                return issue
+    return issue
+
+def container_install_bin(issue: str) -> tuple or bool:
+    """
+    :param issue:       issue of container OS (Debian, Alpine, etc)
+    :return:            binary for install packages
+    """
+    if issue == 'Alpine':
+        return 'apk', 'add'
+    elif issue == 'Debian' or issue == 'Ubuntu':
+        return 'apt', 'install -y'
+    else:
+        return False
+
+
+
+def install_iproute2_in_container(container: str, inst_bin: tuple) -> None:
     """
     Installing iproute2 package to container
     :param container:   container to install
+    :param inst_bin:    apt for Debian or apk for Alpine
     """
+    binary, action = inst_bin
     log.info("Installing missed necessary 'iproute2' package to " + container + " container...")
-    command = docker_bin + " exec " + container + " apt update"
+    command = docker_bin + " exec " + container + " " + binary + " update"
     syscommand(command=command)
-    command = docker_bin + " exec " + container + " apt install -y iproute2"
+    command = docker_bin + " exec " + container + " " + binary + " " + action + " iproute2"
     syscommand(command=command)
 
 
@@ -291,7 +323,12 @@ def configure_container_packages() -> None:
     cont_w_ip = cont_without_ip(cont_list=containers)
     if len(cont_w_ip) > 0:
         for cont in cont_w_ip:
-            install_iproute2_in_container(container=cont)
+            cont_issue = container_issue(cont_name=cont)
+            cont_install_bin = container_install_bin(issue=cont_issue)
+            if cont_install_bin is not False:
+                install_iproute2_in_container(container=cont, inst_bin=cont_install_bin)
+            else:
+                log.error("Unsupported container image!")
     log.info("All containers are checked!")
 
 def replace_file_in_container(cont_id: str, file_to_replace: str, new_file: str) -> None:
