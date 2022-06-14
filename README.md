@@ -16,7 +16,7 @@ Script for configuring your vps after amnezia-vpn containers installed.
 
 ## Requirements
 - python3
-- amnezia-vpn v.2.0.8
+- amnezia-vpn version >= 2.0.8
 
 ## OS support
  - Ubuntu 18,20
