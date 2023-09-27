@@ -19,7 +19,7 @@ Script for configuring your vps after amnezia-vpn containers installed.
 - amnezia-vpn version >= 2.0.8
 
 ## OS support
- - Ubuntu 18,20
+ - Ubuntu 18,20,22
  - Debian 10,11
  
 ## Some warnings
